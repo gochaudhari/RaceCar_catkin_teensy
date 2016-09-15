@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
-from race.msg import drive_param
+from race.msg import velocity_param
+from race.msg import angle_param
 import curses
 #import signal
 #TIMEOUT = 0.1 # number of seconds your want for timeout
@@ -32,7 +33,8 @@ stdscr = curses.initscr()
 curses.cbreak()
 stdscr.keypad(1)
 rospy.init_node('keyboard_talker', anonymous=True)
-pub = rospy.Publisher('drive_parameters', drive_param, queue_size=10)
+velocity_publish = rospy.Publisher('velocity_parameters', velocity_param, queue_size=10)
+angle_publish = rospy.Publisher('angle_parameter', angle_param, queue_size=10)
 
 # set alarm
 #signal.alarm(TIMEOUT)
@@ -86,8 +88,11 @@ while key != ord('q'):
 		left = 0
 		forward = 0
 		stdscr.addstr(5, 20, "Stop")
-	msg = drive_param()
-	msg.velocity = forward
-	msg.angle = left
-	pub.publish(msg)
+	velocity_msg = velocity_param()
+	angle_msg = angle_param()
+	velocity_msg.velocity = forward
+	angle_msg.angle = left
+
+	velocity_publish.publish(velocity_msg)
+	angle_publish.publish(angle_msg)
 curses.endwin()
